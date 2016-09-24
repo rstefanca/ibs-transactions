@@ -13,6 +13,10 @@ public class TwoPhaseAuthenticationTransaction extends AbstractTransaction {
 		this.user = user;
 	}
 
+	public static TwoPhaseAuthenticationTransaction createTwoPhaseAuthenticationTransactionForUser(String user) {
+		return new TwoPhaseAuthenticationTransaction(user);
+	}
+
 	@Override
 	public ChangeStateResult certify(String response) {
 		ChangeStateResult result = super.certify(response);
@@ -24,9 +28,5 @@ public class TwoPhaseAuthenticationTransaction extends AbstractTransaction {
 
 	public String getUser() {
 		return user;
-	}
-
-	public static TwoPhaseAuthenticationTransaction createTwoPhaseAuthenticationTransactionForUser(String user) {
-		return new TwoPhaseAuthenticationTransaction(user);
 	}
 }

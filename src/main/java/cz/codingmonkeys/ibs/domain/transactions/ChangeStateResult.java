@@ -5,10 +5,6 @@ package cz.codingmonkeys.ibs.domain.transactions;
  */
 public abstract class ChangeStateResult {
 
-	public abstract String getErrorCode();
-
-	public abstract boolean isSuccess();
-
 	static ChangeStateResult success() {
 		return ChangeStateSuccess.SUCCESS;
 	}
@@ -16,4 +12,8 @@ public abstract class ChangeStateResult {
 	static ChangeStateResult failure(String errorCode) {
 		return new ChangeStateFailure(errorCode);
 	}
+
+	public abstract String getErrorCode();
+
+	public abstract boolean isSuccess();
 }

@@ -52,12 +52,12 @@ public abstract class AbstractTransaction {
 		return state;
 	}
 
-	void setSignature(Signature signature) {
-		this.signature = signature;
-	}
-
 	public Signature getSignature() {
 		return signature;
+	}
+
+	void setSignature(Signature signature) {
+		this.signature = signature;
 	}
 
 	public void addListener(PropertyChangeListener propertyChangeListener) {

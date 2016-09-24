@@ -5,9 +5,8 @@ package cz.codingmonkeys.ibs.domain.transactions;
  */
 public abstract class TransactionState {
 
-	private final long timestamp;
-
 	final AbstractTransaction transaction;
+	private final long timestamp;
 
 	TransactionState(AbstractTransaction transaction) {
 		this.timestamp = System.currentTimeMillis();
