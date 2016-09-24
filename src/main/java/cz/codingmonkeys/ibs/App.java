@@ -2,7 +2,7 @@ package cz.codingmonkeys.ibs;
 
 import cz.codingmonkeys.ibs.domain.DirectChannelUser;
 import cz.codingmonkeys.ibs.domain.transactions.*;
-import cz.codingmonkeys.ibs.domain.transactions.states.WaitingForCertification;
+import cz.codingmonkeys.ibs.domain.transactions.WaitingForCertification;
 import org.joda.time.DateTime;
 
 import java.beans.PropertyChangeEvent;
@@ -21,71 +21,82 @@ public class App {
 		String response = "1111";
 		String challenge = "1111";
 
-		AbstractTransaction tx = createNewChangeLoginSettingsTransaction(dcu, "2FA");
-		printDcu(dcu, tx);
-		prettyPrintStates(tx);
+		ChangeLoginSettingsTransaction tx = createNewChangeLoginSettingsTransaction(dcu, "2FA");
+		AbstractTransaction tx2fa = createTwoPhaseAuthenticationTransactionForUser("TBCEI1");
+		AbstractTransaction failure = createTwoPhaseAuthenticationTransactionForUser("TBCE1");
+
+		prettyPrintStates(tx, tx2fa, failure);
+		printDcu(tx);
+
 		enableSmsNotification(tx);
+		enableSmsNotification(tx2fa);
 
 		tx.waitForCertification(new Signature(challenge));
 		tx.certify(response);
 
-		AbstractTransaction tx2fa = createTwoPhaseAuthenticationTransactionForUser("TBCEI1");
-		prettyPrintStates(tx2fa);
-		enableSmsNotification(tx2fa);
-
-		tx2fa.waitForCertification(new Signature("2222"));
-		tx2fa.certify("2222");
+		tx2fa.waitForCertification(new Signature(challenge));
+		tx2fa.certify(response);
 
 		printHistory(tx);
 		printHistory(tx2fa);
+
+		System.out.println("FAILURE");
+
+		failure.waitForCertification(new Signature(challenge));
+		ChangeStateResult res = failure.certify("xxx");
+		System.out.println(res);
+		System.out.println(failure.getState());
 	}
 
 	private static void printHistory(AbstractTransaction tx) {
-		System.out.println("History of: " + tx);
+		System.out.println("History of " + tx);
 		for (TransactionState transactionState : tx.getHistory()) {
 			System.out.println(new DateTime(transactionState.getTimestamp()) + " - " + transactionState.toString());
 		}
 	}
 
-	private static void printDcu(DirectChannelUser dcu, AbstractTransaction tx) {
+	private static void printDcu(final ChangeLoginSettingsTransaction tx) {
 		tx.addListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-				System.out.println(((ChangeLoginSettingsTransaction) propertyChangeEvent.getSource()).getDirectChannelUser());
+				System.out.println(tx.getDirectChannelUser());
 			}
 		});
 	}
 
-	private static void prettyPrintStates(AbstractTransaction tx) {
-		tx.addListener(new PropertyChangeListener() {
+	private static void prettyPrintStates(AbstractTransaction... transactions) {
+		PropertyChangeListener listener = new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
 				prettyPrint(propertyChangeEvent);
 			}
-		});
+		};
+
+		for (AbstractTransaction tx : transactions) {
+			tx.addListener(listener);
+		}
 	}
 
-	private static void enableSmsNotification(AbstractTransaction tx) {
-		tx.addListener(new PropertyChangeListener() {
+	private static void enableSmsNotification(AbstractTransaction... transactions) {
+		PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
 				if (propertyChangeEvent.getNewValue() instanceof WaitingForCertification) {
-					System.out.println("Sending sms with chalenge: " + ((WaitingForCertification) propertyChangeEvent.getNewValue()).getAbstractTransaction().getSignature().getChallenge());
+					System.out.println("Sending sms with chalenge: " + ((WaitingForCertification) propertyChangeEvent.getNewValue()).getTransaction().getSignature().getChallenge());
 					System.out.println();
 				}
 			}
-		});
+		};
+
+		for (AbstractTransaction tx : transactions) {
+			tx.addListener(propertyChangeListener);
+		}
 	}
 
 	private static void prettyPrint(PropertyChangeEvent propertyChangeEvent) {
 		System.out.println(propertyChangeEvent.getSource().toString());
 		System.out.println(propertyChangeEvent.getPropertyName() +
 				": " +
-				propertyChangeEvent.getOldValue() +
-				" -> " +
 				propertyChangeEvent.getNewValue() +
-				"\n");
-	}
-
-	private static void prettyPrint(PropertyChangeEvent propertyChangeEvent, DirectChannelUser dcu) {
-		prettyPrint(propertyChangeEvent);
-		System.out.println("dcu: " + dcu);
+				" (previous: " +
+				propertyChangeEvent.getOldValue() +
+				")\n");
 	}
 }

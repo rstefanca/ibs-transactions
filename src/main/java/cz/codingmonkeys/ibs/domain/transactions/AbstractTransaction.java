@@ -10,14 +10,13 @@ import java.util.List;
 /**
  * @author Richard Stefanca
  */
-public class AbstractTransaction {
+public abstract class AbstractTransaction {
 
 	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-	private long id;
+	private Signature signature;
 
 	protected TransactionState state;
-	private Signature signature;
 
 	private List<TransactionState> history = Lists.newArrayList();
 
@@ -25,16 +24,19 @@ public class AbstractTransaction {
 
 	}
 
-	public void waitForCertification(Signature signature) {
-		state.waitForCertification(signature);
+	public ChangeStateResult waitForCertification(Signature signature) {
+		return state.waitForCertification(signature);
 	}
 
-
-	public void certify(String response) {
-		state.certify(response);
+	public ChangeStateResult certify(String response) {
+		return state.certify(response);
 	}
 
-	public void changeState(TransactionState newState) {
+	public ChangeStateResult finish() {
+		return state.finish();
+	}
+
+	void changeState(TransactionState newState) {
 		if (!newState.equals(state)) {
 			this.pcs.firePropertyChange("state", state, newState);
 			addToHistory(state);
@@ -50,16 +52,12 @@ public class AbstractTransaction {
 		return state;
 	}
 
-	public void setSignature(Signature signature) {
+	void setSignature(Signature signature) {
 		this.signature = signature;
 	}
 
 	public Signature getSignature() {
 		return signature;
-	}
-
-	public void finish() {
-		state.finish();
 	}
 
 	public void addListener(PropertyChangeListener propertyChangeListener) {
@@ -68,6 +66,10 @@ public class AbstractTransaction {
 
 	public List<TransactionState> getHistory() {
 		return ImmutableList.copyOf(history);
+	}
+
+	public boolean isPending() {
+		return !(this.getState() instanceof Completed);
 	}
 
 	@Override

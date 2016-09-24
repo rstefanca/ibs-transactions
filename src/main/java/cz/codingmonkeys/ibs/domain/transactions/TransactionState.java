@@ -5,32 +5,42 @@ package cz.codingmonkeys.ibs.domain.transactions;
  */
 public abstract class TransactionState {
 
-	protected AbstractTransaction abstractTransaction;
 	private final long timestamp;
 
-	protected TransactionState(AbstractTransaction abstractTransaction) {
-		this.abstractTransaction = abstractTransaction;
+	final AbstractTransaction transaction;
+
+	TransactionState(AbstractTransaction transaction) {
 		this.timestamp = System.currentTimeMillis();
+		this.transaction = transaction;
 	}
 
-	public void certify(String response) {
+	ChangeStateResult certify(String response) {
 		throw new UnsupportedOperationException("Not supported");
 	}
 
-	public void waitForCertification(Signature signature) {
+	ChangeStateResult waitForCertification(Signature signature) {
 		throw new UnsupportedOperationException("Not supported");
 	}
 
-	public void finish() {
+	ChangeStateResult finish() {
 		throw new UnsupportedOperationException("Not supported");
 	}
 
-	public final AbstractTransaction getAbstractTransaction() {
-		return abstractTransaction;
+	public final AbstractTransaction getTransaction() {
+		return transaction;
 	}
 
 	public long getTimestamp() {
 		return timestamp;
+	}
+
+	final ChangeStateResult changeState(TransactionState newState) {
+		transaction.changeState(newState);
+		return ChangeStateResult.success();
+	}
+
+	final ChangeStateResult failure(String errorCode) {
+		return ChangeStateResult.failure(errorCode);
 	}
 
 	@Override

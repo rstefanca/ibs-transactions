@@ -1,7 +1,5 @@
 package cz.codingmonkeys.ibs.domain.transactions;
 
-import cz.codingmonkeys.ibs.domain.transactions.states.Initialized;
-
 /**
  * @author Richard Stefanca
  */
@@ -16,9 +14,12 @@ public class TwoPhaseAuthenticationTransaction extends AbstractTransaction {
 	}
 
 	@Override
-	public void certify(String response) {
-		super.certify(response);
-		finish();
+	public ChangeStateResult certify(String response) {
+		ChangeStateResult result = super.certify(response);
+		if (!result.isSuccess()) {
+			return result;
+		}
+		return finish();
 	}
 
 	public String getUser() {
