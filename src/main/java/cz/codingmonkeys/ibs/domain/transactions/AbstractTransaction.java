@@ -16,12 +16,12 @@ public abstract class AbstractTransaction {
 
 	private Signature signature;
 
-	protected TransactionState state;
+	private TransactionState state;
 
 	private List<TransactionState> history = Lists.newArrayList();
 
-	protected AbstractTransaction() {
-
+	AbstractTransaction() {
+		state = new Initialized(this);
 	}
 
 	public ChangeStateResult waitForCertification(Signature signature) {

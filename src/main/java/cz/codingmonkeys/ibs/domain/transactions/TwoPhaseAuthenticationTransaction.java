@@ -9,8 +9,8 @@ public class TwoPhaseAuthenticationTransaction extends AbstractTransaction {
 	private final String user;
 
 	private TwoPhaseAuthenticationTransaction(String user) {
+		super();
 		this.user = user;
-		this.state = new Initialized(this);
 	}
 
 	@Override

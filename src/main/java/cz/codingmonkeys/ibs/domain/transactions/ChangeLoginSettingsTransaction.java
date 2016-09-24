@@ -14,9 +14,9 @@ public class ChangeLoginSettingsTransaction extends AbstractTransaction implemen
 	private final String newMfaType;
 
 	private ChangeLoginSettingsTransaction(DirectChannelUser directChannelUser, String newMfaType) {
+		super();
 		this.directChannelUser = directChannelUser;
 		this.newMfaType = newMfaType;
-		this.state = new Initialized(this);
 		addListener(this);
 	}
 
