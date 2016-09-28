@@ -1,1 +1,5 @@
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/transactions/changeAuthentication -d '{"userId": 1, "loginType": "2FA"}'
+
+curl -X PUT -H "Content-Type: application/json" http://localhost:8080/transactions/1/confirm -d '{"id": 1, "tokenResponse": "1111"}'
+
+curl http://localhost:8080/transactions
