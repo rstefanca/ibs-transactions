@@ -1,15 +1,18 @@
 package cz.codingmonkeys.ibs.domain.transactions;
 
+import cz.codingmonkeys.ibs.CurrentTime;
+import lombok.NonNull;
+
 /**
  * @author Richard Stefanca
  */
 public abstract class TransactionState {
 
 	final AbstractTransaction transaction;
-	private final long timestamp;
 
-	TransactionState(AbstractTransaction transaction) {
-		this.timestamp = System.currentTimeMillis();
+	private final long timestamp = CurrentTime.currentDateTime();
+
+	TransactionState(@NonNull AbstractTransaction transaction) {
 		this.transaction = transaction;
 	}
 

@@ -36,9 +36,14 @@ public class App {
 
 		tx2fa.waitForCertification(new Signature(challenge));
 		tx2fa.certify(response);
+		tx2fa.getCreated();
 
 		printHistory(tx);
 		printHistory(tx2fa);
+
+		for (TransactionState transactionState : tx2fa.getAllStates()) {
+			System.out.println(transactionState);
+		}
 
 		System.out.println("FAILURE");
 
@@ -79,7 +84,7 @@ public class App {
 		PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
 				if (propertyChangeEvent.getNewValue() instanceof WaitingForCertification) {
-					System.out.println("Sending sms with chalenge: " + ((WaitingForCertification) propertyChangeEvent.getNewValue()).getTransaction().getSignature().getChallenge());
+					System.out.println("Sending sms with challenge: " + ((WaitingForCertification) propertyChangeEvent.getNewValue()).getTransaction().getSignature().getChallenge());
 					System.out.println();
 				}
 			}

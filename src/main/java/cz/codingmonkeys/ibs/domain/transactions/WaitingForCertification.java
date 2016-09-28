@@ -1,5 +1,7 @@
 package cz.codingmonkeys.ibs.domain.transactions;
 
+import lombok.NonNull;
+
 /**
  * @author Richard Stefanca
  */
@@ -10,14 +12,8 @@ public class WaitingForCertification extends TransactionState {
 	}
 
 	@Override
-	ChangeStateResult certify(String response) {
-		ChangeStateResult changeStateResult;
-		if (transaction.getSignature().confirmWithResponse(response)) {
-			changeStateResult = changeState(new Certified(this));
-		} else {
-			changeStateResult = failure("Invalid signature");
-		}
-
-		return changeStateResult;
+	ChangeStateResult certify(@NonNull String response) {
+		return transaction.getSignature().confirmWithResponse(response) ?
+				changeState(new Certified(this)) : failure("Invalid signature");
 	}
 }
