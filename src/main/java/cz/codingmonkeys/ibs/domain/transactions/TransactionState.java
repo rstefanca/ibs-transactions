@@ -4,6 +4,7 @@ import cz.codingmonkeys.ibs.CurrentTime;
 import lombok.NonNull;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * @author Richard Stefanca
@@ -14,16 +15,19 @@ import javax.persistence.*;
 public abstract class TransactionState {
 
 	@Id
+	@GeneratedValue
 	private long id;
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "transaction_id", referencedColumnName = "id", nullable = false)
-	final AbstractTransaction transaction;
+	@OneToOne(fetch = FetchType.EAGER)
+	@JoinColumn(referencedColumnName = "id", name = "transaction_id")
+	Transaction transaction;
 
 	@Column
 	private final long timestamp = CurrentTime.currentDateTime();
 
-	TransactionState(@NonNull AbstractTransaction transaction) {
+	protected TransactionState() {}
+
+	TransactionState(@NonNull Transaction transaction) {
 		this.transaction = transaction;
 	}
 
@@ -39,7 +43,7 @@ public abstract class TransactionState {
 		throw new UnsupportedOperationException("Not supported");
 	}
 
-	public final AbstractTransaction getTransaction() {
+	public final Transaction getTransaction() {
 		return transaction;
 	}
 

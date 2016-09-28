@@ -7,6 +7,9 @@ import javax.persistence.Entity;
  */
 @Entity
 public class Completed extends TransactionState {
+
+	protected Completed() {}
+
 	Completed(TransactionState transactionState) {
 		super(transactionState.getTransaction());
 	}

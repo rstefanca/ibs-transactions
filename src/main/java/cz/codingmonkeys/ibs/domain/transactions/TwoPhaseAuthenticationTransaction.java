@@ -2,12 +2,17 @@ package cz.codingmonkeys.ibs.domain.transactions;
 
 import lombok.NonNull;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+
 /**
  * @author Richard Stefanca
  */
 
-public class TwoPhaseAuthenticationTransaction extends AbstractTransaction {
+@Entity
+public class TwoPhaseAuthenticationTransaction extends Transaction {
 
+	@Column
 	private final String user;
 
 	private TwoPhaseAuthenticationTransaction(@NonNull String user) {

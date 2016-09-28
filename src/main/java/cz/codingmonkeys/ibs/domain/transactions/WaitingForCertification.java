@@ -10,6 +10,10 @@ import javax.persistence.Entity;
 @Entity
 public class WaitingForCertification extends TransactionState {
 
+	WaitingForCertification() {
+
+	}
+
 	WaitingForCertification(TransactionState transactionState) {
 		super(transactionState.getTransaction());
 	}

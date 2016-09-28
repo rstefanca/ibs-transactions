@@ -1,5 +1,6 @@
 package cz.codingmonkeys.ibs.domain.transactions;
 
+import lombok.Getter;
 import lombok.NonNull;
 
 import javax.persistence.Embeddable;
@@ -11,7 +12,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Signature {
 	@NonNull
-	private String challenge;
+	@Getter private String challenge;
 
 	protected Signature() {
 	}

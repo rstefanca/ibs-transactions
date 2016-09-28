@@ -4,6 +4,7 @@ import lombok.*;
 
 
 import javax.persistence.*;
+import javax.swing.text.StringContent;
 
 /**
  * @author Richard Stefanca
@@ -18,11 +19,14 @@ public class DirectChannelUser {
 
 	private String mfaType;
 
+	private String smsNumber;
+
 	protected DirectChannelUser() {
 	}
 
-	public DirectChannelUser(String mfaType) {
+	public DirectChannelUser(String mfaType, String smsNumber) {
 		this.mfaType = mfaType;
+		this.setSmsNumber(smsNumber);
 	}
 
 

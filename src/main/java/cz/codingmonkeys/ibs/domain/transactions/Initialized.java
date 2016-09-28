@@ -8,8 +8,8 @@ import javax.persistence.Entity;
 @Entity
 public class Initialized extends TransactionState {
 
-	Initialized(AbstractTransaction abstractTransaction) {
-		super(abstractTransaction);
+	Initialized(Transaction transaction) {
+		super(transaction);
 	}
 
 	@Override

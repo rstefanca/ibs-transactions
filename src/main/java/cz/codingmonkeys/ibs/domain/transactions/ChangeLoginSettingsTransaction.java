@@ -11,24 +11,29 @@ import java.beans.PropertyChangeListener;
  * @author Richard Stefanca
  */
 @Entity
-public class ChangeLoginSettingsTransaction extends AbstractTransaction {
+public class ChangeLoginSettingsTransaction extends Transaction {
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "dcu_id", referencedColumnName = "id", nullable = false)
-	private final DirectChannelUser directChannelUser;
+	private  DirectChannelUser directChannelUser;
 
 	@Column
-	private final String newMfaType;
+	private  String newMfaType;
 
-	private ChangeLoginSettingsTransaction(@NonNull DirectChannelUser directChannelUser, @NonNull String newMfaType) {
+	protected ChangeLoginSettingsTransaction() {
+		//for hibernate
 		super();
-		this.directChannelUser = directChannelUser;
-		this.newMfaType = newMfaType;
 		addListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
 				ChangeLoginSettingsTransaction.this.propertyChange(evt);
 			}
 		});
+	}
+
+	private ChangeLoginSettingsTransaction(@NonNull DirectChannelUser directChannelUser, @NonNull String newMfaType) {
+		this();
+		this.directChannelUser = directChannelUser;
+		this.newMfaType = newMfaType;
 	}
 
 	public static ChangeLoginSettingsTransaction createNewChangeLoginSettingsTransaction(DirectChannelUser dcu, String mfaType) {
