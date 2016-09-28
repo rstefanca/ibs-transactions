@@ -3,15 +3,21 @@ package cz.codingmonkeys.ibs.domain.transactions;
 import cz.codingmonkeys.ibs.domain.DirectChannelUser;
 import lombok.NonNull;
 
+import javax.persistence.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 /**
  * @author Richard Stefanca
  */
+@Entity
 public class ChangeLoginSettingsTransaction extends AbstractTransaction {
 
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "dcu_id", referencedColumnName = "id", nullable = false)
 	private final DirectChannelUser directChannelUser;
+
+	@Column
 	private final String newMfaType;
 
 	private ChangeLoginSettingsTransaction(@NonNull DirectChannelUser directChannelUser, @NonNull String newMfaType) {

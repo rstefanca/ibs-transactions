@@ -1,14 +1,25 @@
 package cz.codingmonkeys.ibs.domain.transactions;
 
 import lombok.NonNull;
-import lombok.Value;
+
+import javax.persistence.Embeddable;
 
 /**
  * @author Richard Stefanca
  */
-@Value
+
+@Embeddable
 public class Signature {
-	@NonNull private final String challenge;
+	@NonNull
+	private String challenge;
+
+	protected Signature() {
+	}
+
+	public Signature(@NonNull String challenge) {
+		this.challenge = challenge;
+	}
+
 
 	public boolean confirmWithResponse(String response) {
 		return challenge.equals(response);

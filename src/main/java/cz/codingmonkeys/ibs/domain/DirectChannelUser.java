@@ -1,24 +1,29 @@
 package cz.codingmonkeys.ibs.domain;
 
-import lombok.Data;
+import lombok.*;
+
+
+import javax.persistence.*;
 
 /**
  * @author Richard Stefanca
  */
 @Data
+@Entity
 public class DirectChannelUser {
 
+	@Id
+	@GeneratedValue
+	private Long id;
+
 	private String mfaType;
+
+	protected DirectChannelUser() {
+	}
 
 	public DirectChannelUser(String mfaType) {
 		this.mfaType = mfaType;
 	}
 
-	public String getMfaType() {
-		return mfaType;
-	}
 
-	public void setMfaType(String mfaType) {
-		this.mfaType = mfaType;
-	}
 }

@@ -6,6 +6,7 @@ import cz.codingmonkeys.ibs.CurrentTime;
 import lombok.Getter;
 import lombok.NonNull;
 
+import javax.persistence.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.List;
@@ -13,17 +14,29 @@ import java.util.List;
 /**
  * @author Richard Stefanca
  */
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class AbstractTransaction {
 
+	@Transient
 	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-	@Getter private Signature signature;
+	@Column
+	@Getter private final long created = CurrentTime.currentDateTime();
 
+	@Id
+	//@GeneratedValue
+	@Getter
+	private long id;
+
+	@OneToOne(fetch = FetchType.EAGER, mappedBy = "transaction", cascade = CascadeType.ALL)
 	@Getter private TransactionState state;
 
+	@Transient
 	private final List<TransactionState> history = Lists.newArrayList();
 
-	@Getter private final long created = CurrentTime.currentDateTime();
+	@Embedded
+	@Getter private Signature signature;
 
 	AbstractTransaction() {
 		state = new Initialized(this);
@@ -65,10 +78,12 @@ public abstract class AbstractTransaction {
 		pcs.addPropertyChangeListener(propertyChangeListener);
 	}
 
+	@Transient
 	public List<TransactionState> getHistory() {
 		return ImmutableList.copyOf(history);
 	}
 
+	@Transient
 	public List<TransactionState> getAllStates() {
 		List<TransactionState> result = Lists.newArrayListWithCapacity(history.size() + 1);
 		result.addAll(history);
@@ -77,6 +92,7 @@ public abstract class AbstractTransaction {
 		return ImmutableList.copyOf(result);
 	}
 
+	@Transient
 	public boolean isPending() {
 		return !(this.getState() instanceof Completed);
 	}

@@ -3,13 +3,24 @@ package cz.codingmonkeys.ibs.domain.transactions;
 import cz.codingmonkeys.ibs.CurrentTime;
 import lombok.NonNull;
 
+import javax.persistence.*;
+
 /**
  * @author Richard Stefanca
  */
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "STATE_NAME")
 public abstract class TransactionState {
 
+	@Id
+	private long id;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "transaction_id", referencedColumnName = "id", nullable = false)
 	final AbstractTransaction transaction;
 
+	@Column
 	private final long timestamp = CurrentTime.currentDateTime();
 
 	TransactionState(@NonNull AbstractTransaction transaction) {
